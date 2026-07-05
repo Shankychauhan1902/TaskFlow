@@ -72,6 +72,12 @@ const updateTask = async (req, res) =>{
         message: "Invalid task ID",
       });
     }
+    if(req.body.title !== undefined && (!req.body.title.trim()) || !req.body.title){
+      return res.status(400).json({
+        message: "Title cannot be empty",
+      });
+    }
+
     const task = await Task.findByIdAndUpdate(
       req.params.id,
       req.body,
