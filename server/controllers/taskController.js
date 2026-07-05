@@ -29,7 +29,16 @@ const createTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
   try {
-    const tasks = await Task.find();
+    const filter = {};
+
+    if(req.query.status){
+      filter.status = req.query.status;
+    }
+    if(req.query.priority){
+      filter.priority = req.query.priority;
+    }
+    const tasks = await Task.find(filter);
+    
     res.status(200).json(tasks);
   }
   catch(error){
