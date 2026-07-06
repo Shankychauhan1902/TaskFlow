@@ -37,7 +37,16 @@ const getTasks = async (req, res) => {
     if(req.query.priority){
       filter.priority = req.query.priority;
     }
-    const tasks = await Task.find(filter);
+    
+    let sortOption = {};
+    if(req.query.sort==="newest"){
+      sortOption = { createdAt: -1 };
+    }
+
+    if(req.query.sort==="oldest"){
+      sortOption = { createdAt: 1 };
+    }
+    const tasks = await Task.find(filter).sort(sortOption);
     
     res.status(200).json(tasks);
   }
