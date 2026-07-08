@@ -44,6 +44,10 @@ const getTasks = async (req, res) => {
         $options: "i",
       };
     }
+
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
     
     let sortOption = {};
     if(req.query.sort==="newest"){
@@ -53,9 +57,17 @@ const getTasks = async (req, res) => {
     if(req.query.sort==="oldest"){
       sortOption = { createdAt: 1 };
     }
-    const tasks = await Task.find(filter).sort(sortOption);
+
+    const totalTasks = await Task.countDocuments(filter);
+
+    const tasks = await Task.find(filter).sort(sortOption).skip(skip).limit(limit);
     
-    res.status(200).json(tasks);
+    res.status(200).json({
+      tasks,
+      currentPage: page,
+      totalPages: Math.ceil(totalTasks / limit),
+      totalTasks,
+    });
   }
   catch(error){
     res.status(500).json({
